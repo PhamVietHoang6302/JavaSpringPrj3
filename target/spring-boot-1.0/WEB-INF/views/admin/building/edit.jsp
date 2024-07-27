@@ -37,7 +37,6 @@
                 <div class="col-xs-12">
                     <input type="hidden" name="buildingId" id="buildingId" value=""/>
                     <form:form modelAttribute="buildingEdit" id="form-edit" action="/admin/building-edit" method="GET">
-                        $("#buildingId").val(${buildingEdit.id});
                         <div class="form-horizontal">
                             <div class="form-group">
                                 <div class="col-xs-3">
@@ -264,6 +263,7 @@
 </div>
 <script>
     $('#btnAddBuilding').click(function () {
+        $("#buildingId").val("${buildingEdit.id}");
         var json = {};
         var formData = $('#form-edit').serializeArray();
         var typeCode = [];
@@ -282,13 +282,17 @@
         if (json['typeCode'] == '') {
             return alert("Loại tòa nhà không được thiếu");
         }
+        if(json['district'] == '')
+        {
+            return alert("Loại tòa nhà không được thiếu");
+        }
         var brokerageFee = json['brokerageFee'];
         if (isNaN(brokerageFee) || brokerageFee.trim() === '') {
             $('#brokerageFeeError').text('Phí môi giới phải là số hợp lệ có dạng x.x .');
             hasError = true;
         }
 
-        if ($("#buildingId").val() != null) {
+        if ($("#buildingId").val() != null && $("#buildingId").val() != "") {
             json["id"] = $("#buildingId").val();
         }
 
@@ -305,7 +309,7 @@
             dataType: "JSON",
             contentType: "application/json",
             success: function (response) {
-                if (data["id"] != null) {
+                if (data['id'] == null || data['id'] == "") {
                     alert("Thêm thành công");
                 } else {
                     alert("Thay đổi thành công")

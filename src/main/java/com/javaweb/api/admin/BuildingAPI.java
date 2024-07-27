@@ -51,8 +51,9 @@ public class BuildingAPI {
 
     }
 
-    @PostMapping("/{idBuilding}/staffs/{idStaffs}")
-    public ResponseEntity<ResponseDTO> updateStaff(@PathVariable Long idBuilding, @PathVariable List<Long> idStaffs) {
+    @PostMapping("/{idBuilding}/staffs")
+    public ResponseEntity<ResponseDTO> updateStaff(@PathVariable Long idBuilding,
+                                                   @RequestBody List<Long> idStaffs) {
         ResponseDTO responseDTO = userService.changeOfBuildingManagementStaff(idBuilding, idStaffs);
         if (responseDTO.getMessage().equals("Successfully")) {
             return new ResponseEntity<>(responseDTO, HttpStatus.OK);

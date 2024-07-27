@@ -361,15 +361,16 @@
         var staffs = $('#staffList tbody input:checked').map(function () {
             return this.value;
         }).get();
-        data['staffs'] = staffs;
-        changeOfBuildingManagementStaff(data);
+        staffs = staffs.map(Number);
+
+        changeOfBuildingManagementStaff(data['buildingId'], staffs);
     })
 
-    function changeOfBuildingManagementStaff(data) {
+    function changeOfBuildingManagementStaff(buildingId, staffIds) {
         $.ajax({
-            url: ${buildingAPI} +data['buildingId'] + "/staffs/" + data['staffs'],
+            url: ${buildingAPI} + buildingId + "/staffs",
             type: "POST",
-            data: JSON.stringify(data),
+            data: JSON.stringify(staffIds),
             dataType: "JSON",
             contentType: "application/json",
             success: function () {

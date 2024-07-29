@@ -27,7 +27,7 @@ public class BuildingAPI {
         if (responseDTO.getMessage().equals("Building saved successfully")) {
             return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
         }
-        return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR) ;
 
     }
 

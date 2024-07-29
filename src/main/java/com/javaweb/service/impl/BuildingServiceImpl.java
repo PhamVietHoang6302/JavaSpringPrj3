@@ -11,6 +11,7 @@ import com.javaweb.utils.converters.ConvertBuildingsToDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class BuildingServiceImpl implements IBuildingService {
 
     @Autowired
@@ -66,15 +68,13 @@ public class BuildingServiceImpl implements IBuildingService {
         ResponseDTO responseDTO = new ResponseDTO();
         responseDTO.setData(ids);
         String message = "";
-        for (Long id : ids) {
-            try {
-                buildingRepository.deleteById(id);
-                message = "Building deleted successfully";
-            } catch (Exception e) {
-                responseDTO.setMessage("Building deletion failed");
-                responseDTO.setDetail(e.getMessage());
-                return responseDTO;
-            }
+        try {
+            buildingRepository.deleteAllByIdIn(ids);
+            message = "Building deleted successfully";
+        } catch (Exception e) {
+            responseDTO.setMessage("Building deletion failed");
+            responseDTO.setDetail(e.getMessage());
+            return responseDTO;
         }
         responseDTO.setMessage(message);
         return responseDTO;

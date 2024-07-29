@@ -11,7 +11,7 @@ import com.javaweb.entity.UserEntity;
 import com.javaweb.exception.MyException;
 import com.javaweb.model.response.ResponseDTO;
 import com.javaweb.model.response.StaffResponseDTO;
-import com.javaweb.repository.AssignmentRepository;
+import com.javaweb.repository.AssignmentBuildingRepository;
 import com.javaweb.repository.BuildingRepository;
 import com.javaweb.repository.RoleRepository;
 import com.javaweb.repository.UserRepository;
@@ -45,7 +45,7 @@ public class UserService implements IUserService {
     private UserConverter userConverter;
 
     @Autowired
-    AssignmentRepository assignmentRepository;
+    AssignmentBuildingRepository assignmentBuildingRepository;
 
     @Autowired
     private BuildingRepository buildingRepository;
@@ -251,11 +251,11 @@ public class UserService implements IUserService {
                 AssignmentBuildingEntity assignmentBuildingEntity = new AssignmentBuildingEntity();
                 assignmentBuildingEntity.setBuilding(buildingEntity);
                 assignmentBuildingEntity.setStaffs(userRepository.findById(staffId).orElse(null));
-                assignmentRepository.save(assignmentBuildingEntity);
+                assignmentBuildingRepository.save(assignmentBuildingEntity);
             }
 
             for (Long staffId : staffIdsToRemove) {
-                assignmentRepository.deleteByBuilding_idAndStaffs_id(buildingId, staffId);
+                assignmentBuildingRepository.deleteByBuilding_idAndStaffs_id(buildingId, staffId);
             }
         } catch (Exception e) {
             message = e.getMessage();

@@ -184,6 +184,17 @@ public class UserService implements IUserService {
         }
     }
 
+
+    @Override
+    public Map<Long, String> getStaffs() {
+        List<UserEntity> userEntities = userRepository.findByStatusAndRoles_Code(1, "STAFF");
+        Map<Long, String> map = new HashMap<>();
+        for (UserEntity userEntity : userEntities) {
+            map.put(userEntity.getId(), userEntity.getFullName());
+        }
+        return map;
+    }
+
     @Override
     public ResponseDTO listStaffChecked(Long buildingId) {
         ResponseDTO responseDTO = new ResponseDTO();
@@ -205,58 +216,6 @@ public class UserService implements IUserService {
                 staffResponseDTOS.add(staffResponseDTO);
             }
             responseDTO.setData(staffResponseDTOS);
-        } catch (Exception e) {
-            message = e.getMessage();
-            responseDTO.setMessage(message);
-            return responseDTO;
-        }
-        message = "Successfully";
-        responseDTO.setMessage(message);
-        return responseDTO;
-    }
-
-
-    @Override
-    public Map<Long, String> getStaffs() {
-        List<UserEntity> userEntities = userRepository.findByStatusAndRoles_Code(1, "STAFF");
-        Map<Long, String> map = new HashMap<>();
-        for (UserEntity userEntity : userEntities) {
-            map.put(userEntity.getId(), userEntity.getFullName());
-        }
-        return map;
-    }
-
-    @Override
-    public ResponseDTO changeOfBuildingManagementStaff(Long buildingId, List<Long> staffs) {
-        ResponseDTO responseDTO = new ResponseDTO();
-        String message = "";
-        try {
-            List<Long> originalStaffs = new ArrayList<>();
-
-            List<UserEntity> staffAssignmentBuilding = userRepository.findByStatusAndRoles_CodeAndAssignmentBuildingEntities_Building_Id(1, "STAFF", buildingId);
-
-            for (UserEntity userEntity : staffAssignmentBuilding) {
-                originalStaffs.add(userEntity.getId());
-            }
-
-            List<Long> staffIdsToAdd = new ArrayList<>(staffs);
-            List<Long> staffIdsToRemove = new ArrayList<>(originalStaffs);
-
-            staffIdsToAdd.removeAll(originalStaffs);
-            staffIdsToRemove.removeAll(staffs);
-
-            BuildingEntity buildingEntity = buildingRepository.findById(buildingId).orElse(null);
-
-            for (Long staffId : staffIdsToAdd) {
-                AssignmentBuildingEntity assignmentBuildingEntity = new AssignmentBuildingEntity();
-                assignmentBuildingEntity.setBuilding(buildingEntity);
-                assignmentBuildingEntity.setStaffs(userRepository.findById(staffId).orElse(null));
-                assignmentBuildingRepository.save(assignmentBuildingEntity);
-            }
-
-            for (Long staffId : staffIdsToRemove) {
-                assignmentBuildingRepository.deleteByBuilding_idAndStaffs_id(buildingId, staffId);
-            }
         } catch (Exception e) {
             message = e.getMessage();
             responseDTO.setMessage(message);

@@ -10,8 +10,6 @@ import java.util.Date;
 @Getter
 @Setter
 public class BuildingSearchResponse extends AbstractDTO {
-	private Long id;
-	private Date createdDate;
 	private String name;
 	private String address;
 	private Long numberOfBasement;

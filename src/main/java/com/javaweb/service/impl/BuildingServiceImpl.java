@@ -1,15 +1,20 @@
 package com.javaweb.service.impl;
 
+import com.javaweb.entity.AssignmentBuildingEntity;
 import com.javaweb.entity.BuildingEntity;
 import com.javaweb.entity.RentAreaEntity;
+import com.javaweb.entity.UserEntity;
 import com.javaweb.model.dto.BuildingDTO;
 import com.javaweb.model.request.BuildingSearchRequest;
 import com.javaweb.model.response.BuildingSearchResponse;
 import com.javaweb.model.response.ResponseDTO;
+import com.javaweb.model.response.StaffResponseDTO;
 import com.javaweb.repository.AssignmentBuildingRepository;
 import com.javaweb.repository.BuildingRepository;
 import com.javaweb.repository.RentAreaRepository;
+import com.javaweb.repository.UserRepository;
 import com.javaweb.service.IBuildingService;
+import com.javaweb.utils.RentAreaUtils;
 import com.javaweb.utils.converters.ConvertBuildingsToDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +42,12 @@ public class BuildingServiceImpl implements IBuildingService {
 
     @Autowired
     private RentAreaRepository rentAreaRepository;
+
     @Autowired
     private AssignmentBuildingRepository assignmentBuildingRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Override
     public List<BuildingSearchResponse> buildingResponse(BuildingSearchRequest buildingSearchRequest) {
@@ -55,30 +64,12 @@ public class BuildingServiceImpl implements IBuildingService {
             if (buildingDTO.getId() != null) {
                 rentAreaRepository.deleteByBuilding_Id(buildingDTO.getId());
             }
-
             modelMapper.map(buildingDTO, buildingEntity);
 
             if (buildingDTO.getRentArea() != null && buildingDTO.getRentArea() != "") {
-                List<Long> rentAreaList = Arrays.stream(buildingDTO.getRentArea().split(","))
-                        .map(Long::valueOf)
-                        .collect(Collectors.toList());
-
-                List<RentAreaEntity> newRentAreaEntities = rentAreaList.stream()
-                        .map(value -> {
-                            RentAreaEntity rentAreaEntity = new RentAreaEntity();
-                            rentAreaEntity.setValue(value);
-                            rentAreaEntity.setBuilding(buildingEntity);
-                            return rentAreaEntity;
-                        })
-                        .collect(Collectors.toList());
-
-                rentAreaRepository.saveAll(newRentAreaEntities);
-
+                rentAreaRepository.saveAll(RentAreaUtils.ConfigRentArea(buildingEntity, buildingDTO));
             }
-
-
             buildingEntity.setType(buildingDTO.getTypeCode().stream().map(Object::toString).collect(Collectors.joining(",")));
-
             buildingRepository.save(buildingEntity);
             responseDTO.setMessage("Building saved successfully");
             responseDTO.setData(buildingEntity);
@@ -120,5 +111,27 @@ public class BuildingServiceImpl implements IBuildingService {
         return responseDTO;
     }
 
+    @Override
+    public ResponseDTO changeOfBuildingManagementStaff(Long buildingId, List<Long> staffs) {
+        ResponseDTO responseDTO = new ResponseDTO();
+        String message = "";
+        try {
+            assignmentBuildingRepository.deleteByBuilding_id(buildingId);
+            BuildingEntity buildingEntity = buildingRepository.findById(buildingId).orElse(null);
+            for (Long staffId : staffs) {
+                AssignmentBuildingEntity assignmentBuildingEntity = new AssignmentBuildingEntity();
+                assignmentBuildingEntity.setBuilding(buildingEntity);
+                assignmentBuildingEntity.setStaffs(userRepository.findById(staffId).orElse(null));
+                assignmentBuildingRepository.save(assignmentBuildingEntity);
+            }
 
+        } catch (Exception e) {
+            message = e.getMessage();
+            responseDTO.setMessage(message);
+            return responseDTO;
+        }
+        message = "Successfully";
+        responseDTO.setMessage(message);
+        return responseDTO;
+    }
 }

@@ -28,7 +28,7 @@ public class BuildingRepositoryCustomImpl implements BuildingRepositoryCustom {
 
     @Override
     public List<BuildingEntity> findAll(BuildingSearchRequest buildingSearchRequest) {
-        StringBuilder sql = new StringBuilder("select distinct b.* from building as b ");
+        StringBuilder sql = new StringBuilder(" select distinct b.* from building as b ");
         StringBuilder where = new StringBuilder(" where 1 = 1 ");
         QueryJoin(buildingSearchRequest, sql);
         QuerySQLNormal(buildingSearchRequest, where);

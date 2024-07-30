@@ -15,9 +15,6 @@ public class UserEntity extends BaseEntity {
 
     private static final long serialVersionUID = -4988455421375043688L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(name = "username", nullable = false, unique = true)
     private String userName;

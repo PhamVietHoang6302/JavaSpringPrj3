@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 public class BuildingSearchRequest extends AbstractDTO {
+    private Long id;
     private String name;
     private Long floorArea;
     private String district;

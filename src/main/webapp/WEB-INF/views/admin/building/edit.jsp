@@ -131,6 +131,14 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-xs-3">
+                                    <label> Mô tả giá thuê </label>
+                                </div>
+                                <div class="col-xs-9">
+                                    <form:input class="form-control" path="rentPriceDescription"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-3">
                                     <label> Phí dịch vụ </label>
                                 </div>
                                 <div class="col-xs-9">
@@ -282,8 +290,7 @@
         if (json['typeCode'] == '') {
             return alert("Loại tòa nhà không được thiếu");
         }
-        if(json['district'] == '')
-        {
+        if (json['district'] == '') {
             return alert("Loại tòa nhà không được thiếu");
         }
         var brokerageFee = json['brokerageFee'];

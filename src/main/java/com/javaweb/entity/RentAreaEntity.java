@@ -10,10 +10,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "rentarea")
-public class RentAreaEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class RentAreaEntity extends BaseEntity {
 
     @Column(name = "value")
     private Long value;
@@ -22,15 +19,5 @@ public class RentAreaEntity {
     @JoinColumn(name = "buildingid")
     private BuildingEntity building;
 
-    @Column(name = "createddate")
-    private Date createdDate;
 
-    @Column(name = "modifieddate")
-    private String modifiedDate;
-
-    @Column(name = "createdby")
-    private String createdBy;
-
-    @Column(name = "modifiedby")
-    private String modifiedBy;
 }

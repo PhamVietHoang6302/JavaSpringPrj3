@@ -41,5 +41,4 @@ public interface IUserService {
 
     int countTotalItems();
 
-    ResponseDTO changeOfBuildingManagementStaff(Long buildingId, List<Long> staffs);
 }

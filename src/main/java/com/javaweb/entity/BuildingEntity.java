@@ -11,10 +11,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "building")
-public class BuildingEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class BuildingEntity extends BaseEntity {
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -102,18 +99,6 @@ public class BuildingEntity {
 
     @Column(name = "avatar")
     private String avatar;
-
-    @Column(name = "createddate")
-    private Date createdDate;
-
-    @Column(name = "modifieddate")
-    private String modifiedDate;
-
-    @Column(name = "createdby")
-    private String createdBy;
-
-    @Column(name = "modifiedby")
-    private String modifiedBy;
 
     @Column(name = "managername")
     private String managerName;

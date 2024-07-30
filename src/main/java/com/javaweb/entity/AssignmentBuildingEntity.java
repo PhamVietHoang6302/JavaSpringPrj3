@@ -10,10 +10,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "assignmentbuilding")
-public class AssignmentBuildingEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+public class AssignmentBuildingEntity extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "buildingid")
@@ -23,16 +20,6 @@ public class AssignmentBuildingEntity {
     @JoinColumn(name = "staffid")
     private UserEntity staffs;
 
-    @Column(name = "createddate")
-    private Date createdDate;
 
-    @Column(name = "modifieddate")
-    private Date modifiedDate;
-
-    @Column(name = "createdby")
-    private String createdBy;
-
-    @Column(name = "modifiedby")
-    private String modifiedBy;
 
 }

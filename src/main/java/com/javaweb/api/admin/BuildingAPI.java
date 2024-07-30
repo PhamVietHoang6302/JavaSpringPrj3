@@ -4,6 +4,7 @@ import com.javaweb.model.dto.BuildingDTO;
 import com.javaweb.model.response.ResponseDTO;
 import com.javaweb.service.IBuildingService;
 import com.javaweb.service.IUserService;
+import com.javaweb.service.impl.BuildingServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,8 @@ public class BuildingAPI {
 
     @Autowired
     IUserService userService;
+    @Autowired
+    private BuildingServiceImpl buildingServiceImpl;
 
     @PostMapping
     public ResponseEntity<ResponseDTO> createOrUpdateBuilding(@RequestBody BuildingDTO buildingDTO) {
@@ -27,7 +30,7 @@ public class BuildingAPI {
         if (responseDTO.getMessage().equals("Building saved successfully")) {
             return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
         }
-        return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR) ;
+        return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
 
     }
 
@@ -54,7 +57,7 @@ public class BuildingAPI {
     @PostMapping("/{idBuilding}/staffs")
     public ResponseEntity<ResponseDTO> updateStaff(@PathVariable Long idBuilding,
                                                    @RequestBody List<Long> idStaffs) {
-        ResponseDTO responseDTO = userService.changeOfBuildingManagementStaff(idBuilding, idStaffs);
+        ResponseDTO responseDTO = buildingServiceImpl.changeOfBuildingManagementStaff(idBuilding, idStaffs);
         if (responseDTO.getMessage().equals("Successfully")) {
             return new ResponseEntity<>(responseDTO, HttpStatus.OK);
         }

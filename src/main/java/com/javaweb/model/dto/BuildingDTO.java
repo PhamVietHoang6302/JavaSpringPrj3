@@ -10,7 +10,6 @@ import java.util.Map;
 @Getter
 @Setter
 public class BuildingDTO extends AbstractDTO{
-    private Long id;
     private String name;
     private String street;
     private String ward;

@@ -26,4 +26,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>, UserRep
     List<UserEntity> findByStatusAndRoles_CodeAndAssignmentBuildingEntities_Building_Id(int status, String roleCode, Long buildingCode);
 
     List<UserEntity> findByIdIn(List<Long> id);
+
 }

@@ -13,11 +13,8 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "user_role")
-public class UserRoleEntity {
+public class UserRoleEntity extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -27,16 +24,5 @@ public class UserRoleEntity {
     @JoinColumn(name = "role_id")
     private RoleEntity roles;
 
-    @Column(name = "createddate")
-    private Date createdDate;
-
-    @Column(name = "modifieddate")
-    private Date modifiedDate;
-
-    @Column(name = "createdby")
-    private String createdBy;
-
-    @Column(name = "modifiedby")
-    private String modifiedBy;
 
 }

@@ -20,4 +20,5 @@ public interface IBuildingService {
 
     ResponseDTO deleteBuilding(List<Long> ids);
 
+    ResponseDTO changeOfBuildingManagementStaff(Long buildingId, List<Long> staffs);
 }

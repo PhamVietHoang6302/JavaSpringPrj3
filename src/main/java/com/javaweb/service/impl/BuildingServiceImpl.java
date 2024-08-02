@@ -18,6 +18,10 @@ import com.javaweb.utils.RentAreaUtils;
 import com.javaweb.utils.converters.ConvertBuildingsToDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,10 +54,17 @@ public class BuildingServiceImpl implements IBuildingService {
     UserRepository userRepository;
 
     @Override
-    public List<BuildingSearchResponse> buildingResponse(BuildingSearchRequest buildingSearchRequest) {
-        List<BuildingEntity> listBuildingRepository = buildingRepository.findAll(buildingSearchRequest);
+    public Page<BuildingSearchResponse> buildingResponse(BuildingSearchRequest buildingSearchRequest, int pageNow) {
+
+        if (pageNow >= 1) {
+            pageNow -= 1;
+        }
+        buildingSearchRequest.setMaxPageItems(10);
+        Pageable pageable = PageRequest.of(pageNow, buildingSearchRequest.getMaxPageItems());
+        Page<BuildingEntity> pageBuildingRepository = buildingRepository.findAll(buildingSearchRequest, pageable);
+        List<BuildingEntity> listBuildingRepository = pageBuildingRepository.getContent();
         List<BuildingSearchResponse> listBuildingSearchResponse = convertBuildingsToDTO.ConvertBuildingsEntityToDTO(listBuildingRepository);
-        return listBuildingSearchResponse;
+        return new PageImpl<>(listBuildingSearchResponse, pageable, pageBuildingRepository.getTotalElements());
     }
 
     @Override

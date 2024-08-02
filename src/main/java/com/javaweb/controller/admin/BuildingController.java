@@ -1,22 +1,19 @@
 package com.javaweb.controller.admin;
 
 
-import com.javaweb.entity.BuildingEntity;
 import com.javaweb.enums.buildingType;
 import com.javaweb.enums.districtCode;
 import com.javaweb.model.dto.BuildingDTO;
 import com.javaweb.model.request.BuildingSearchRequest;
+import com.javaweb.model.response.BuildingSearchResponse;
 import com.javaweb.repository.BuildingRepository;
 import com.javaweb.service.IBuildingService;
 import com.javaweb.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
 
 @RestController(value = "buildingControllerOfAdmin")
 public class BuildingController {
@@ -31,17 +28,27 @@ public class BuildingController {
     BuildingRepository buildingRepository;
 
     @GetMapping("/admin/building-list")
-    public ModelAndView buildingList(@ModelAttribute(name = "modelSearch") BuildingSearchRequest buildingSearchRequest) {
+    public ModelAndView buildingList(@RequestParam(value = "pageBuilding", defaultValue = "1") int page,
+                                     @ModelAttribute(name = "modelSearch") BuildingSearchRequest buildingSearchRequest) {
+
         ModelAndView modelAndView = new ModelAndView("admin/building/list");
+        Page<BuildingSearchResponse> pageResult = buildingService.buildingResponse(buildingSearchRequest, page);
+        if (pageResult.getTotalPages() < page) {
+            page = Math.max(1, pageResult.getTotalPages());
+            pageResult = buildingService.buildingResponse(buildingSearchRequest, page - 1);
+        }
         modelAndView.addObject("district", districtCode.type());
         modelAndView.addObject("rentType", buildingType.type());
         modelAndView.addObject("staffs", userService.getStaffs());
-        modelAndView.addObject("listBuildingResponse", buildingService.buildingResponse(buildingSearchRequest));
+        modelAndView.addObject("listBuildingResponse", pageResult.getContent());
+        modelAndView.addObject("totalPages", pageResult.getTotalPages());
+        modelAndView.addObject("currentPage", pageResult.getNumber() + 1);
+
         return modelAndView;
     }
 
     @GetMapping("/admin/building-edit")
-    public ModelAndView buildingEdit(@ModelAttribute(name = "buildingEdit")BuildingDTO buildingDTO) {
+    public ModelAndView buildingEdit(@ModelAttribute(name = "buildingEdit") BuildingDTO buildingDTO) {
         ModelAndView modelAndView = new ModelAndView("admin/building/edit");
         modelAndView.addObject("district", districtCode.type());
         modelAndView.addObject("rentType", buildingType.type());

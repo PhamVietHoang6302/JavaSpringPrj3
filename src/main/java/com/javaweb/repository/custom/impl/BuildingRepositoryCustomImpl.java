@@ -3,6 +3,10 @@ package com.javaweb.repository.custom.impl;
 import com.javaweb.entity.BuildingEntity;
 import com.javaweb.model.request.BuildingSearchRequest;
 import com.javaweb.repository.custom.BuildingRepositoryCustom;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -27,15 +31,36 @@ public class BuildingRepositoryCustomImpl implements BuildingRepositoryCustom {
 
 
     @Override
-    public List<BuildingEntity> findAll(BuildingSearchRequest buildingSearchRequest) {
-        StringBuilder sql = new StringBuilder(" select distinct b.* from building as b ");
-        StringBuilder where = new StringBuilder(" where 1 = 1 ");
+    public Page<BuildingEntity> findAll(BuildingSearchRequest buildingSearchRequest, Pageable pageable) {
+        StringBuilder sql = new StringBuilder("SELECT DISTINCT b.* FROM building AS b ");
+        StringBuilder where = new StringBuilder("WHERE 1 = 1 ");
         QueryJoin(buildingSearchRequest, sql);
         QuerySQLNormal(buildingSearchRequest, where);
         QuerySQLSpecial(buildingSearchRequest, where);
         sql.append(where);
+
+        int page = pageable.getPageNumber();
+        if (page <= 0) {
+            pageable = PageRequest.of(0, pageable.getPageSize());
+        }
+
+        sql.append(" LIMIT ").append(pageable.getPageSize()).append(" OFFSET ").append(pageable.getOffset());
         Query query = entityManager.createNativeQuery(sql.toString(), BuildingEntity.class);
-        return query.getResultList();
+        List<BuildingEntity> resultList = query.getResultList();
+        long total = countTotal(buildingSearchRequest);
+        return new PageImpl<>(resultList, pageable, total);
+    }
+
+    private long countTotal(BuildingSearchRequest buildingSearchRequest) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(DISTINCT b.id) FROM building AS b ");
+        StringBuilder where = new StringBuilder("WHERE 1 = 1 ");
+        QueryJoin(buildingSearchRequest, sql);
+        QuerySQLNormal(buildingSearchRequest, where);
+        QuerySQLSpecial(buildingSearchRequest, where);
+        sql.append(where);
+
+        Query query = entityManager.createNativeQuery(sql.toString());
+        return ((Number) query.getSingleResult()).longValue();
     }
 
     private void QuerySQLNormal(BuildingSearchRequest buildingSearchRequest, StringBuilder where) {

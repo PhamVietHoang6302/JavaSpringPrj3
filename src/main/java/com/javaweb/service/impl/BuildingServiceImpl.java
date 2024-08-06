@@ -111,6 +111,7 @@ public class BuildingServiceImpl implements IBuildingService {
         responseDTO.setData(ids);
         String message = "";
         try {
+            buildingRepository.deleteAssignmentsByBuildingIds(ids);
             buildingRepository.deleteAllByIdIn(ids);
             message = "Building deleted successfully";
         } catch (Exception e) {

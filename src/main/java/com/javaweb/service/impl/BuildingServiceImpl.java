@@ -2,13 +2,11 @@ package com.javaweb.service.impl;
 
 
 import com.javaweb.entity.BuildingEntity;
-import com.javaweb.entity.RentAreaEntity;
 import com.javaweb.entity.UserEntity;
 import com.javaweb.model.dto.BuildingDTO;
 import com.javaweb.model.request.BuildingSearchRequest;
 import com.javaweb.model.response.BuildingSearchResponse;
 import com.javaweb.model.response.ResponseDTO;
-import com.javaweb.model.response.StaffResponseDTO;
 import com.javaweb.repository.BuildingRepository;
 import com.javaweb.repository.RentAreaRepository;
 import com.javaweb.repository.UserRepository;
@@ -113,10 +111,7 @@ public class BuildingServiceImpl implements IBuildingService {
         responseDTO.setData(ids);
         String message = "";
         try {
-            rentAreaRepository.deleteByBuilding_IdIn(ids);
-//            assignmentBuildingRepository.deleteByBuilding_idIn(ids);
             buildingRepository.deleteAllByIdIn(ids);
-
             message = "Building deleted successfully";
         } catch (Exception e) {
             responseDTO.setMessage("Building deletion failed");
@@ -139,7 +134,6 @@ public class BuildingServiceImpl implements IBuildingService {
                 userEntities.add(userRepository.findById(staffId).orElse(null));
             }
             buildingEntity.setUsers(userEntities);
-            responseDTO.setData(buildingEntity);
             buildingRepository.save(buildingEntity);
         } catch (Exception e) {
             message = e.getMessage();

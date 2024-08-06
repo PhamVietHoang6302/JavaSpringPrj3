@@ -29,16 +29,16 @@ public class BuildingEntity extends BaseEntity {
     @Column(name = "type")
     private String type;
 
-    @OneToMany(mappedBy = "building", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "building", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<RentAreaEntity> listRentArea;
 
 //    @OneToMany(mappedBy = "building", fetch = FetchType.LAZY)
 //    private List<AssignmentBuildingEntity> assignmentBuildings;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "building_user",
-            joinColumns = @JoinColumn(name = "buildingid"),
-            inverseJoinColumns = @JoinColumn(name = "staffid"))
+    @JoinTable(name = "assignmentbuilding",
+            joinColumns = @JoinColumn(name = "buildingid", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "staffid", nullable = false))
     private List<UserEntity> users = new ArrayList<>();
 
     @Column(name = "structure")

@@ -1,6 +1,6 @@
 package com.javaweb.service.impl;
 
-import com.javaweb.entity.AssignmentBuildingEntity;
+
 import com.javaweb.entity.BuildingEntity;
 import com.javaweb.entity.RentAreaEntity;
 import com.javaweb.entity.UserEntity;
@@ -9,7 +9,6 @@ import com.javaweb.model.request.BuildingSearchRequest;
 import com.javaweb.model.response.BuildingSearchResponse;
 import com.javaweb.model.response.ResponseDTO;
 import com.javaweb.model.response.StaffResponseDTO;
-import com.javaweb.repository.AssignmentBuildingRepository;
 import com.javaweb.repository.BuildingRepository;
 import com.javaweb.repository.RentAreaRepository;
 import com.javaweb.repository.UserRepository;
@@ -52,9 +51,6 @@ public class BuildingServiceImpl implements IBuildingService {
 
     @Autowired
     private RentAreaRepository rentAreaRepository;
-
-    @Autowired
-    private AssignmentBuildingRepository assignmentBuildingRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -118,7 +114,7 @@ public class BuildingServiceImpl implements IBuildingService {
         String message = "";
         try {
             rentAreaRepository.deleteByBuilding_IdIn(ids);
-            assignmentBuildingRepository.deleteByBuilding_idIn(ids);
+//            assignmentBuildingRepository.deleteByBuilding_idIn(ids);
             buildingRepository.deleteAllByIdIn(ids);
 
             message = "Building deleted successfully";
@@ -136,15 +132,15 @@ public class BuildingServiceImpl implements IBuildingService {
         ResponseDTO responseDTO = new ResponseDTO();
         String message = "";
         try {
-            assignmentBuildingRepository.deleteByBuilding_id(buildingId);
+            buildingRepository.deleteAssignmentsByBuildingId(buildingId);
             BuildingEntity buildingEntity = buildingRepository.findById(buildingId).orElse(null);
+            List<UserEntity> userEntities = new ArrayList<>();
             for (Long staffId : staffs) {
-                AssignmentBuildingEntity assignmentBuildingEntity = new AssignmentBuildingEntity();
-                assignmentBuildingEntity.setBuilding(buildingEntity);
-                assignmentBuildingEntity.setStaffs(userRepository.findById(staffId).orElse(null));
-                assignmentBuildingRepository.save(assignmentBuildingEntity);
+                userEntities.add(userRepository.findById(staffId).orElse(null));
             }
-
+            buildingEntity.setUsers(userEntities);
+            responseDTO.setData(buildingEntity);
+            buildingRepository.save(buildingEntity);
         } catch (Exception e) {
             message = e.getMessage();
             responseDTO.setMessage(message);

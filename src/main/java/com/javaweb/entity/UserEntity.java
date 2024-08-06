@@ -38,8 +38,11 @@ public class UserEntity extends BaseEntity {
     private List<RoleEntity> roles = new ArrayList<>();
 
 
-    @OneToMany(mappedBy = "staffs", fetch = FetchType.LAZY)
-    private List<AssignmentBuildingEntity> assignmentBuildingEntities;
+//    @OneToMany(mappedBy = "staffs", fetch = FetchType.LAZY)
+//    private List<AssignmentBuildingEntity> assignmentBuildingEntities;
+
+    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    List<BuildingEntity> buildings = new ArrayList<>();
 
 //    @OneToMany(mappedBy="users", fetch = FetchType.LAZY)
 //    private List<UserRoleEntity> userRoleEntities = new ArrayList<>();

@@ -2,8 +2,6 @@ package com.javaweb.service.impl;
 
 import com.javaweb.constant.SystemConstant;
 import com.javaweb.converter.UserConverter;
-import com.javaweb.entity.AssignmentBuildingEntity;
-import com.javaweb.entity.BuildingEntity;
 import com.javaweb.model.dto.PasswordDTO;
 import com.javaweb.model.dto.UserDTO;
 import com.javaweb.entity.RoleEntity;
@@ -11,7 +9,6 @@ import com.javaweb.entity.UserEntity;
 import com.javaweb.exception.MyException;
 import com.javaweb.model.response.ResponseDTO;
 import com.javaweb.model.response.StaffResponseDTO;
-import com.javaweb.repository.AssignmentBuildingRepository;
 import com.javaweb.repository.BuildingRepository;
 import com.javaweb.repository.RoleRepository;
 import com.javaweb.repository.UserRepository;
@@ -46,8 +43,6 @@ public class UserService implements IUserService {
     @Autowired
     private UserConverter userConverter;
 
-    @Autowired
-    AssignmentBuildingRepository assignmentBuildingRepository;
 
     @Autowired
     private BuildingRepository buildingRepository;
@@ -205,7 +200,7 @@ public class UserService implements IUserService {
         try {
             List<UserEntity> allStaffs = userRepository.findByStatusAndRoles_Code(1, "STAFF");
             List<UserEntity> staffsAssignmentBuilding =
-                    userRepository.findByStatusAndRoles_CodeAndAssignmentBuildingEntities_Building_Id(1, "STAFF", buildingId);
+                    userRepository.findByStatusAndRoles_CodeAndBuildings_Id(1, "STAFF", buildingId);
             for (UserEntity userEntity : allStaffs) {
                 StaffResponseDTO staffResponseDTO = new StaffResponseDTO();
                 staffResponseDTO.setStaffId(userEntity.getId());

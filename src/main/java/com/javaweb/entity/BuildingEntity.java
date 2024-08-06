@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,8 +32,14 @@ public class BuildingEntity extends BaseEntity {
     @OneToMany(mappedBy = "building", fetch = FetchType.LAZY)
     private List<RentAreaEntity> listRentArea;
 
-    @OneToMany(mappedBy = "building", fetch = FetchType.LAZY)
-    private List<AssignmentBuildingEntity> assignmentBuildings;
+//    @OneToMany(mappedBy = "building", fetch = FetchType.LAZY)
+//    private List<AssignmentBuildingEntity> assignmentBuildings;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "building_user",
+            joinColumns = @JoinColumn(name = "buildingid"),
+            inverseJoinColumns = @JoinColumn(name = "staffid"))
+    private List<UserEntity> users = new ArrayList<>();
 
     @Column(name = "structure")
     private String structure;

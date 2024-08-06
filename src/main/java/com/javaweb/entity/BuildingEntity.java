@@ -105,4 +105,7 @@ public class BuildingEntity extends BaseEntity {
 
     @Column(name = "managerphone")
     private String managerPhone;
+
+    @Column(name = "image")
+    private String image;
 }

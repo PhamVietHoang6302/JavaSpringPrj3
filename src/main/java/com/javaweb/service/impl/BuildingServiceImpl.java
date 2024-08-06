@@ -15,7 +15,9 @@ import com.javaweb.repository.RentAreaRepository;
 import com.javaweb.repository.UserRepository;
 import com.javaweb.service.IBuildingService;
 import com.javaweb.utils.RentAreaUtils;
+import com.javaweb.utils.UploadFileUtils;
 import com.javaweb.utils.converters.ConvertBuildingsToDTO;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,6 +27,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -52,6 +58,8 @@ public class BuildingServiceImpl implements IBuildingService {
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    private UploadFileUtils uploadFileUtils;
 
     @Override
     public Page<BuildingSearchResponse> buildingResponse(BuildingSearchRequest buildingSearchRequest, int pageNow) {
@@ -81,6 +89,7 @@ public class BuildingServiceImpl implements IBuildingService {
                 rentAreaRepository.saveAll(RentAreaUtils.ConfigRentArea(buildingEntity, buildingDTO));
             }
             buildingEntity.setType(buildingDTO.getTypeCode().stream().map(Object::toString).collect(Collectors.joining(",")));
+            saveThumbnail(buildingDTO, buildingEntity);
             buildingRepository.save(buildingEntity);
             responseDTO.setMessage("Building saved successfully");
             responseDTO.setData(buildingEntity);
@@ -145,4 +154,35 @@ public class BuildingServiceImpl implements IBuildingService {
         responseDTO.setMessage(message);
         return responseDTO;
     }
+
+
+    private void saveThumbnail(BuildingDTO buildingDTO, BuildingEntity buildingEntity) {
+        if (buildingDTO.getImageBase64() != null && !buildingDTO.getImageBase64().isEmpty()) {
+            String base64Data = buildingDTO.getImageBase64();
+            if (base64Data.startsWith("data:image/")) {
+                base64Data = base64Data.split(",")[1];
+            }
+
+            String path = "C://home/office/building/" + buildingDTO.getImageName();
+            System.out.println("Saving image to path: " + path);
+
+            if (buildingEntity.getImage() != null && !buildingEntity.getImage().isEmpty()) {
+                File oldFile = new File("C://home/office/building" + buildingEntity.getImage());
+                if (oldFile.exists()) {
+                    oldFile.delete();
+                    System.out.println("Deleted old file: " + oldFile.getAbsolutePath());
+                }
+            }
+
+            byte[] bytes = Base64.decodeBase64(base64Data);
+            try (FileOutputStream fos = new FileOutputStream(path)) {
+                fos.write(bytes);
+                System.out.println("Image saved successfully.");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            buildingEntity.setImage(buildingDTO.getImageName());
+        }
+    }
+
 }

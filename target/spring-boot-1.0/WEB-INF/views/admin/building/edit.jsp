@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/common/taglib.jsp" %>
+<c:url var="buildingAPI" value="/api/buildings"/>
 <html>
 <head>
     <title>Thông tin tòa nhà</title>
@@ -250,6 +251,21 @@
                                     <form:input class="form-control" path="note"/>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 no-padding-right">Hình tòa nhà</label>
+                                <input class="col-sm-3 no-padding-right" type="file" id="uploadImage"/>
+                                <div class="col-sm-9">
+                                    <c:if test="${not empty buildingEdit.image}">
+                                        <c:set var="imagePath" value="/repository/building/${buildingEdit.image}"/>
+                                        <img src="${imagePath}" id="viewImage" width="300px" height="300px"
+                                             style="margin-top: 50px"/>
+                                    </c:if>
+
+                                    <c:if test="${empty buildingEdit.image}">
+                                        <img src="/static/img/default.png" id="viewImage" width="300px" height="300px">
+                                    </c:if>
+                                </div>
+                            </div>
                         </div>
 
                     </form:form>
@@ -270,6 +286,8 @@
     </div>
 </div>
 <script>
+    var imageBase64 = '';
+    var imageName = '';
     $('#btnAddBuilding').click(function () {
         $("#buildingId").val("${buildingEdit.id}");
         var json = {};
@@ -282,6 +300,10 @@
                 typeCode.push(it.value);
             }
         });
+        if ('' !== imageBase64) {
+            json['imageBase64'] = imageBase64;
+            json['imageName'] = imageName;
+        }
         json['typeCode'] = typeCode;
         $('#brokerageFeeError').text('');
         if (json['name'] == '') {
@@ -332,6 +354,30 @@
             }
         });
     }
+
+    $('#uploadImage').change(function (event) {
+        var reader = new FileReader();
+        var file = $(this)[0].files[0];
+        reader.onload = function (e) {
+            imageBase64 = e.target.result;
+            imageName = file.name; // ten hinh khong dau, khoang cach. Dat theo format sau: a-b-c
+        };
+        reader.readAsDataURL(file);
+        openImage(this, "viewImage");
+    });
+
+
+    function openImage(input, imageView) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#' + imageView).attr('src', reader.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+
 </script>
 </body>
 </html>

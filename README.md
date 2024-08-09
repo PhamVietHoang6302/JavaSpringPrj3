@@ -8,5 +8,5 @@ Java Development Kit (JDK) 1.8 or later
 Maven 3.2+
 MySQL 8.0+
 
-#### database mySql
+#### Database mySql
 https://drive.google.com/file/d/1hc9ibQTg3OPUghV4aZWUdAMy57Rsdwy5/view?usp=drive_link

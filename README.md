@@ -1,9 +1,9 @@
 # JavaSpringPrj3
 
-###Spring Boot Application
+### Spring Boot Application
 This is a Java web application built using Spring Boot, designed for managing building information.
 
-###Prerequisites
+### Prerequisites
 Java Development Kit (JDK) 1.8 or later
 Maven 3.2+
 MySQL 8.0+

@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Date;
 
 @MappedSuperclass
@@ -23,6 +24,16 @@ public class BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    public void setId(Object id) {
+        if (id instanceof BigInteger) {
+            this.id = ((BigInteger) id).longValue();
+        } else if (id instanceof Long) {
+            this.id = (Long) id;
+        } else {
+            throw new IllegalArgumentException("Id must be either BigInteger or Long.");
+        }
+    }
 
     @Column(name = "createddate")
     @CreatedDate

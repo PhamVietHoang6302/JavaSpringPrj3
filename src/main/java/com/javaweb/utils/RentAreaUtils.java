@@ -13,7 +13,6 @@ public class RentAreaUtils {
         List<Long> rentAreaList = Arrays.stream(buildingDTO.getRentArea().split(","))
                 .map(Long::valueOf)
                 .collect(Collectors.toList());
-
         List<RentAreaEntity> newRentAreaEntities = rentAreaList.stream()
                 .map(value -> {
                     RentAreaEntity rentAreaEntity = new RentAreaEntity();

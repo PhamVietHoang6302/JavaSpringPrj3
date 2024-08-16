@@ -1,6 +1,7 @@
 package com.javaweb.repository.custom.impl;
 
 import com.javaweb.entity.BuildingEntity;
+import com.javaweb.exception.MyException;
 import com.javaweb.model.request.BuildingSearchRequest;
 import com.javaweb.repository.custom.BuildingRepositoryCustom;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -46,7 +48,11 @@ public class BuildingRepositoryCustomImpl implements BuildingRepositoryCustom {
 
         sql.append(" LIMIT ").append(pageable.getPageSize()).append(" OFFSET ").append(pageable.getOffset());
         Query query = entityManager.createNativeQuery(sql.toString(), BuildingEntity.class);
-        List<BuildingEntity> resultList = query.getResultList();
+        List<BuildingEntity> resultList = new ArrayList<>();
+
+
+        resultList = query.getResultList();
+
         long total = countTotal(buildingSearchRequest);
         return new PageImpl<>(resultList, pageable, total);
     }

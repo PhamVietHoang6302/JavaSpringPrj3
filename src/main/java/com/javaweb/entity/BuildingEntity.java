@@ -29,13 +29,13 @@ public class BuildingEntity extends BaseEntity {
     @Column(name = "type")
     private String type;
 
-    @OneToMany(mappedBy = "building", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "building", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.MERGE}, orphanRemoval = true)
     private List<RentAreaEntity> listRentArea;
 
 //    @OneToMany(mappedBy = "building", fetch = FetchType.LAZY)
 //    private List<AssignmentBuildingEntity> assignmentBuildings;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "assignmentbuilding",
             joinColumns = @JoinColumn(name = "buildingid", nullable = false),
             inverseJoinColumns = @JoinColumn(name = "staffid", nullable = false))
